@@ -35,13 +35,17 @@ jobs:
 
             - name: Tag images with Git SHA 
               run: | 
-                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:${{ github.sha }} 
+                docker tag final-project-frontend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:latest
+                docker tag final-project-frontend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:${{ github.sha }} 
                 
-                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:${{ github.sha }} 
+                docker tag final-project-backend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:latest
+                docker tag final-project-backend:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:${{ github.sha }} 
                 
-                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:${{ github.sha }}
+                docker tag inal-project-nginx:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:latest
+                docker tag inal-project-nginx:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:${{ github.sha }}
 
-                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:${{ github.sha }}
+                docker tag final-project-cache:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:latest
+                docker tag final-project-cache:latest ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:${{ github.sha }}
             
             - name: Push images 
               run: | 
