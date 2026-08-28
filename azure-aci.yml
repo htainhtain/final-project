@@ -1,0 +1,80 @@
+apiVersion: 2019-12-01
+location: eastus
+name: final-project
+type: Microsoft.ContainerInstance/containerGroups
+properties:
+  osType: Linux
+  restartPolicy: Always
+  containers:
+    - name: nginx
+      properties:
+        image: finalprojectacr.azurecr.io/nginx:latest
+        ports:
+          - port: 80
+            protocol: TCP
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGB: 0.5
+
+    - name: frontend
+      properties:
+        image: finalprojectacr.azurecr.io/frontend:v2
+        environmentVariables:
+          - name: VITE_BACKEND_URL
+            value: "http://localhost:80/api"
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGB: 0.5
+
+    - name: backend
+      properties:
+        image: finalprojectacr.azurecr.io/backend:latest
+        environmentVariables:
+          - name: SQL_SERVER
+            value: "final-proejct-sql-server.database.windows.net"
+          - name: SQL_SERVER_PORT
+            value: "1433"
+          - name: SQL_SERVER_DATABASE
+            value: "final-project-db"
+          - name: REDIS_HOST
+            value: "127.0.0.1"
+          - name: REDIS_PORT
+            value: "6379"
+          - name: AZURE_KEY_VAULT_NAME
+            value: "final-project-kv2"
+          - name: AZURE_KEY_VAULT_SECRET
+            value: "secret"
+            # secret value = key
+          - name: AZURE_KEY_VAULT_REDIS_SECRET
+            value: "redis"
+            # redis value = yourediskey
+        resources:
+          requests:
+            cpu: 1
+            memoryInGB: 1.5
+
+    - name: cache
+      properties:
+        image: finalprojectacr.azurecr.io/cache:latest
+        environmentVariables:
+          - name: REDIS_PASSWORD
+            value: ${REDIS_PASSWORD}
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGB: 0.5
+
+  imageRegistryCredentials:
+  - server: finalprojectacr.azurecr.io
+    username: finalprojectacr
+    password: 172BjoPYy5PjIJcpxM9Dl0hdQpUGTN79fPOypFxLsvxpJoMBsv4wJQQJ99CHACYeBjFEqg7NAAACAZCReFsG
+
+  ipAddress:
+    type: Public
+    dnsNameLabel: final-project-test
+
+    ports:
+      - protocol: TCP
+        port: 80

@@ -1,0 +1,56 @@
+services:
+  frontend:
+    platform: linux/amd64
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8000/api
+    networks:
+      - final-project-network
+
+  backend:
+    platform: linux/amd64
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      SQL_SERVER: ${SQL_SERVER}
+      SQL_SERVER_PORT: ${SQL_SERVER_PORT}
+      SQL_SERVER_DATABASE: ${SQL_SERVER_DATABASE}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      AZURE_KEY_VAULT_NAME: ${AZURE_KEY_VAULT_NAME}
+      AZURE_KEY_VAULT_SECRET: ${AZURE_KEY_VAULT_SECRET}
+      AZURE_KEY_VAULT_REDIS_SECRET: ${AZURE_KEY_VAULT_REDIS_SECRET}
+    networks:
+      - final-project-network
+    
+  nginx:
+    platform: linux/amd64
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 8000:80
+    depends_on:
+      - frontend
+      - backend
+      - cache
+    networks:
+      - final-project-network
+
+  cache:
+    platform: linux/amd64
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    networks:
+      - final-project-network
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+networks:
+  final-project-network:
+    name: final-project-network
