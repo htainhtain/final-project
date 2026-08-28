@@ -1,0 +1,62 @@
+name: Build and Push Docker Images
+
+on:
+    push:
+        branches:
+            - main
+        
+permissions:
+    contents: read
+
+env:
+    ACR_NAME: finalprojectacr
+    ACR_LOGIN_SERVER: finalprojectacr.azurecr.io
+
+jobs:
+    build-and-push:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: 'Login via Azure CLI'
+              uses: azure/login@v3
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - name: Login to ACR 
+              run: | 
+                az acr login --name ${{ env.ACR_NAME }}
+
+            - name: Build Docker Compose images 
+              run: | 
+                docker compose build
+
+            - name: Tag images with Git SHA 
+              run: | 
+                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:latest \ 
+                ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:${{ github.sha }} 
+                
+                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:latest \ 
+                ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:${{ github.sha }} 
+                
+                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:latest \ 
+                ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:${{ github.sha }}
+
+                docker tag ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:latest \ 
+                ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:${{ github.sha }}
+            
+            - name: Push images 
+              run: | 
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:latest 
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-frontend:${{ github.sha }} 
+                
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:latest 
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-backend:${{ github.sha }} 
+                
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:latest 
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-nginx:${{ github.sha }}
+                
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:latest 
+                docker push ${{ env.ACR_LOGIN_SERVER }}/final-project-cache:${{ github.sha }}
