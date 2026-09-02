@@ -42,7 +42,7 @@ jobs:
                         - 'nginx/**'                        
 
                     cache:
-                        - 'cache/**'
+                        - 'redis/**'
 
     build-and-push:
         runs-on: ubuntu-latest
