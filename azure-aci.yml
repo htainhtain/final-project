@@ -66,10 +66,10 @@ properties:
             cpu: 0.5
             memoryInGB: 0.5
 
-  imageRegistryCredentials:
-  - server: finalprojectacr.azurecr.io
-    username: finalprojectacr
-    password: 172BjoPYy5PjIJcpxM9Dl0hdQpUGTN79fPOypFxLsvxpJoMBsv4wJQQJ99CHACYeBjFEqg7NAAACAZCReFsG
+  # imageRegistryCredentials:
+  # - server: finalprojectacr.azurecr.io
+  #   username: finalprojectacr
+  #   password: 
 
   ipAddress:
     type: Public
